@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NetPulse — Network Health Monitor</title>
+  <meta name="description" content="Real-time API & network health monitoring dashboard">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- ─── Header ─────────────────────────────────────────── -->
+  <header class="header">
+    <div class="header-left">
+      <div class="logo">
+        <span class="logo-icon">⚡</span>
+        <h1>NetPulse</h1>
+      </div>
+      <span class="tagline">Real-time Health Monitor</span>
+    </div>
+    <div class="header-right">
+      <div class="live-indicator">
+        <span class="live-dot"></span>
+        <span>LIVE</span>
+      </div>
+      <span class="clock" id="clock"></span>
+    </div>
+  </header>
+
+  <!-- ─── Summary Cards ─────────────────────────────────── -->
+  <section class="summary-section">
+    <div class="summary-card card-total">
+      <div class="card-icon">📡</div>
+      <div class="card-body">
+        <span class="card-value" id="totalTargets">-</span>
+        <span class="card-label">Monitored</span>
+      </div>
+    </div>
+    <div class="summary-card card-up">
+      <div class="card-icon">✅</div>
+      <div class="card-body">
+        <span class="card-value" id="upTargets">-</span>
+        <span class="card-label">Healthy</span>
+      </div>
+    </div>
+    <div class="summary-card card-down">
+      <div class="card-icon">🔴</div>
+      <div class="card-body">
+        <span class="card-value" id="downTargets">-</span>
+        <span class="card-label">Down</span>
+      </div>
+    </div>
+    <div class="summary-card card-latency">
+      <div class="card-icon">⚡</div>
+      <div class="card-body">
+        <span class="card-value" id="avgLatency">-</span>
+        <span class="card-label">Avg Latency</span>
+      </div>
+    </div>
+    <div class="summary-card card-uptime">
+      <div class="card-icon">📊</div>
+      <div class="card-body">
+        <span class="card-value" id="overallUptime">-</span>
+        <span class="card-label">Uptime</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── Main Content ───────────────────────────────────── -->
+  <main class="main-content">
+    <!-- Target List -->
+    <section class="targets-section">
+      <h2 class="section-title">Endpoints</h2>
+      <div class="targets-list" id="targetsList">
+        <div class="loading-state">
+          <div class="spinner"></div>
+          <p>Waiting for first check...</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Detail Panel -->
+    <section class="detail-section" id="detailPanel">
+      <div class="detail-placeholder">
+        <span class="detail-icon">📈</span>
+        <p>Select an endpoint to view details</p>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <span>NetPulse v1.0 — Open Source Network Monitor</span>
+  </footer>
+
+  <script src="https://cdn.socket.io/4.8.0/socket.io.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

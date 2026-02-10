@@ -1,0 +1,51 @@
+{
+    "port": 3000,
+    "checkIntervalMs": 30000,
+    "dataRetentionDays": 30,
+    "targets": [
+        {
+            "name": "Google",
+            "url": "https://www.google.com",
+            "method": "GET",
+            "expectedStatus": 200,
+            "timeoutMs": 10000
+        },
+        {
+            "name": "GitHub API",
+            "url": "https://api.github.com",
+            "method": "GET",
+            "expectedStatus": 200,
+            "timeoutMs": 10000,
+            "headers": {
+                "Accept": "application/vnd.github.v3+json"
+            }
+        },
+        {
+            "name": "JSONPlaceholder",
+            "url": "https://jsonplaceholder.typicode.com/posts/1",
+            "method": "GET",
+            "expectedStatus": 200,
+            "timeoutMs": 5000,
+            "expectBodyContains": "sunt aut facere"
+        }
+    ],
+    "alerts": {
+        "enabled": false,
+        "webhooks": [
+            {
+                "type": "discord",
+                "url": "https://discord.com/api/webhooks/YOUR_WEBHOOK_ID/YOUR_WEBHOOK_TOKEN"
+            },
+            {
+                "type": "slack",
+                "url": "https://hooks.slack.com/services/YOUR/SLACK/WEBHOOK"
+            },
+            {
+                "type": "custom",
+                "url": "https://your-server.com/webhook",
+                "method": "POST"
+            }
+        ],
+        "cooldownMinutes": 5
+    }
+}
