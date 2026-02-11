@@ -1,101 +1,367 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>NetPulse — Network Health Monitor</title>
-  <meta name="description" content="Real-time API & network health monitoring dashboard">
+  <title>NeuralForge — AI Studio</title>
+  <meta name="description"
+    content="Self-hosted AI Studio with 7 built-in AI engines: chatbot, sentiment, summarizer, code analyzer, neural network, text generator, classifier">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap"
+    rel="stylesheet">
   <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
-  <!-- ─── Header ─────────────────────────────────────────── -->
-  <header class="header">
-    <div class="header-left">
+  <!-- Neural Network Animated Background -->
+  <canvas id="neuralCanvas"></canvas>
+
+  <!-- Sidebar Navigation -->
+  <nav class="sidebar" id="sidebar">
+    <div class="sidebar-header">
       <div class="logo">
-        <span class="logo-icon">⚡</span>
-        <h1>NetPulse</h1>
+        <span class="logo-icon">🧠</span>
+        <span class="logo-text">NeuralForge</span>
       </div>
-      <span class="tagline">Real-time Health Monitor</span>
+      <span class="logo-badge">AI Studio</span>
     </div>
-    <div class="header-right">
-      <div class="live-indicator">
-        <span class="live-dot"></span>
-        <span>LIVE</span>
-      </div>
-      <span class="clock" id="clock"></span>
-    </div>
-  </header>
 
-  <!-- ─── Summary Cards ─────────────────────────────────── -->
-  <section class="summary-section">
-    <div class="summary-card card-total">
-      <div class="card-icon">📡</div>
-      <div class="card-body">
-        <span class="card-value" id="totalTargets">-</span>
-        <span class="card-label">Monitored</span>
-      </div>
+    <div class="sidebar-nav">
+      <button class="nav-item active" data-page="dashboard" id="nav-dashboard">
+        <span class="nav-icon">⚡</span>
+        <span class="nav-label">Dashboard</span>
+        <span class="nav-pulse"></span>
+      </button>
+      <button class="nav-item" data-page="chat" id="nav-chat">
+        <span class="nav-icon">💬</span>
+        <span class="nav-label">AI Chat</span>
+      </button>
+      <button class="nav-item" data-page="sentiment" id="nav-sentiment">
+        <span class="nav-icon">😊</span>
+        <span class="nav-label">Sentiment</span>
+      </button>
+      <button class="nav-item" data-page="summarizer" id="nav-summarizer">
+        <span class="nav-icon">📝</span>
+        <span class="nav-label">Summarizer</span>
+      </button>
+      <button class="nav-item" data-page="code" id="nav-code">
+        <span class="nav-icon">🔍</span>
+        <span class="nav-label">Code Analyzer</span>
+      </button>
+      <button class="nav-item" data-page="neural" id="nav-neural">
+        <span class="nav-icon">🧠</span>
+        <span class="nav-label">Neural Net</span>
+      </button>
+      <button class="nav-item" data-page="generator" id="nav-generator">
+        <span class="nav-icon">✍️</span>
+        <span class="nav-label">Generator</span>
+      </button>
+      <button class="nav-item" data-page="classifier" id="nav-classifier">
+        <span class="nav-icon">🏷️</span>
+        <span class="nav-label">Classifier</span>
+      </button>
     </div>
-    <div class="summary-card card-up">
-      <div class="card-icon">✅</div>
-      <div class="card-body">
-        <span class="card-value" id="upTargets">-</span>
-        <span class="card-label">Healthy</span>
-      </div>
-    </div>
-    <div class="summary-card card-down">
-      <div class="card-icon">🔴</div>
-      <div class="card-body">
-        <span class="card-value" id="downTargets">-</span>
-        <span class="card-label">Down</span>
-      </div>
-    </div>
-    <div class="summary-card card-latency">
-      <div class="card-icon">⚡</div>
-      <div class="card-body">
-        <span class="card-value" id="avgLatency">-</span>
-        <span class="card-label">Avg Latency</span>
-      </div>
-    </div>
-    <div class="summary-card card-uptime">
-      <div class="card-icon">📊</div>
-      <div class="card-body">
-        <span class="card-value" id="overallUptime">-</span>
-        <span class="card-label">Uptime</span>
-      </div>
-    </div>
-  </section>
 
-  <!-- ─── Main Content ───────────────────────────────────── -->
-  <main class="main-content">
-    <!-- Target List -->
-    <section class="targets-section">
-      <h2 class="section-title">Endpoints</h2>
-      <div class="targets-list" id="targetsList">
-        <div class="loading-state">
-          <div class="spinner"></div>
-          <p>Waiting for first check...</p>
+    <div class="sidebar-footer">
+      <div class="server-status" id="serverStatus">
+        <span class="status-dot online"></span>
+        <span>Server Online</span>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Main Content Area -->
+  <main class="main-content" id="mainContent">
+
+    <!-- ═══════ DASHBOARD PAGE ═══════ -->
+    <section class="page active" id="page-dashboard">
+      <div class="page-header">
+        <h1 class="page-title">
+          <span class="title-icon">⚡</span>
+          AI Command Center
+        </h1>
+        <p class="page-subtitle">7 AI engines at your fingertips — all running locally</p>
+      </div>
+      <div class="stats-grid" id="dashboardStats">
+        <div class="stat-card glow-purple">
+          <div class="stat-icon">💬</div>
+          <div class="stat-value" id="stat-chat">0</div>
+          <div class="stat-label">Chat Messages</div>
+        </div>
+        <div class="stat-card glow-cyan">
+          <div class="stat-icon">😊</div>
+          <div class="stat-value" id="stat-sentiment">0</div>
+          <div class="stat-label">Analyses</div>
+        </div>
+        <div class="stat-card glow-pink">
+          <div class="stat-icon">✍️</div>
+          <div class="stat-value" id="stat-generated">0</div>
+          <div class="stat-label">Generated</div>
+        </div>
+        <div class="stat-card glow-green">
+          <div class="stat-icon">🏷️</div>
+          <div class="stat-value" id="stat-classified">0</div>
+          <div class="stat-label">Classified</div>
+        </div>
+      </div>
+      <div class="engine-grid" id="engineGrid"></div>
+    </section>
+
+    <!-- ═══════ CHAT PAGE ═══════ -->
+    <section class="page" id="page-chat">
+      <div class="page-header">
+        <h1 class="page-title"><span class="title-icon">💬</span> AI Chat</h1>
+        <div class="page-actions">
+          <select class="select-styled" id="personalitySelect">
+            <option value="friendly">🌟 Nova (Friendly)</option>
+            <option value="professional">🏢 Atlas (Professional)</option>
+            <option value="creative">🎨 Muse (Creative)</option>
+            <option value="technical">⚙️ Byte (Technical)</option>
+          </select>
+          <button class="btn btn-ghost" id="clearChatBtn">Clear</button>
+        </div>
+      </div>
+      <div class="chat-container">
+        <div class="chat-messages" id="chatMessages">
+          <div class="chat-welcome">
+            <span class="welcome-icon">🤖</span>
+            <p>Start a conversation with your AI companion!</p>
+          </div>
+        </div>
+        <div class="chat-input-area">
+          <input type="text" class="chat-input" id="chatInput" placeholder="Type your message..." autocomplete="off">
+          <button class="btn btn-primary btn-glow" id="chatSendBtn">Send ⚡</button>
         </div>
       </div>
     </section>
 
-    <!-- Detail Panel -->
-    <section class="detail-section" id="detailPanel">
-      <div class="detail-placeholder">
-        <span class="detail-icon">📈</span>
-        <p>Select an endpoint to view details</p>
+    <!-- ═══════ SENTIMENT PAGE ═══════ -->
+    <section class="page" id="page-sentiment">
+      <div class="page-header">
+        <h1 class="page-title"><span class="title-icon">😊</span> Sentiment Analysis</h1>
+      </div>
+      <div class="tool-layout">
+        <div class="tool-input-panel">
+          <textarea class="textarea-styled" id="sentimentInput" placeholder="Enter text to analyze sentiment..."
+            rows="6">The new AI features are absolutely amazing! I love how intuitive the interface is, though the loading times could be better.</textarea>
+          <button class="btn btn-primary btn-glow" id="sentimentAnalyzeBtn">Analyze Sentiment 🔮</button>
+        </div>
+        <div class="tool-output-panel" id="sentimentResults">
+          <div class="empty-state"><span>🔮</span>
+            <p>Results will appear here</p>
+          </div>
+        </div>
       </div>
     </section>
+
+    <!-- ═══════ SUMMARIZER PAGE ═══════ -->
+    <section class="page" id="page-summarizer">
+      <div class="page-header">
+        <h1 class="page-title"><span class="title-icon">📝</span> Text Summarizer</h1>
+        <div class="page-actions">
+          <label class="slider-label">Compression: <span id="ratioValue">30%</span></label>
+          <input type="range" class="range-styled" id="ratioSlider" min="10" max="70" value="30">
+        </div>
+      </div>
+      <div class="tool-layout">
+        <div class="tool-input-panel">
+          <textarea class="textarea-styled" id="summarizerInput" placeholder="Paste a long text to summarize..."
+            rows="10">Artificial intelligence has transformed nearly every industry in the modern world. From healthcare to finance, AI systems are being deployed to solve complex problems that were once considered impossible. In healthcare, machine learning algorithms can now detect diseases from medical images with accuracy rivaling human experts. Natural language processing enables real-time translation across hundreds of languages. Self-driving vehicles use deep learning to navigate complex traffic scenarios. The financial sector uses AI for fraud detection, algorithmic trading, and risk assessment. In education, adaptive learning systems personalize the learning experience for each student. The entertainment industry leverages AI for recommendation systems, content creation, and visual effects. However, the rapid advancement of AI also raises important ethical questions about privacy, job displacement, and algorithmic bias. Researchers and policymakers are working together to establish frameworks that ensure AI development benefits all of humanity.</textarea>
+          <button class="btn btn-primary btn-glow" id="summarizeBtn">Summarize 📝</button>
+        </div>
+        <div class="tool-output-panel" id="summarizerResults">
+          <div class="empty-state"><span>📝</span>
+            <p>Summary will appear here</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════ CODE ANALYZER PAGE ═══════ -->
+    <section class="page" id="page-code">
+      <div class="page-header">
+        <h1 class="page-title"><span class="title-icon">🔍</span> Code Analyzer</h1>
+        <div class="page-actions">
+          <select class="select-styled" id="codeLangSelect">
+            <option value="">Auto Detect</option>
+            <option value="javascript">JavaScript</option>
+            <option value="python">Python</option>
+            <option value="java">Java</option>
+          </select>
+        </div>
+      </div>
+      <div class="tool-layout">
+        <div class="tool-input-panel">
+          <textarea class="textarea-styled code-textarea" id="codeInput" placeholder="Paste code to analyze..."
+            rows="12" spellcheck="false">function processData(data) {
+  var result = [];
+  for (var i = 0; i < data.length; i++) {
+    if (data[i] != null) {
+      if (data[i].type == "active") {
+        if (data[i].value > 100) {
+          console.log("Processing: " + data[i].name);
+          result.push(data[i].value * 2);
+        }
+      }
+    }
+  }
+  return result;
+}</textarea>
+          <button class="btn btn-primary btn-glow" id="codeAnalyzeBtn">Analyze Code 🔍</button>
+        </div>
+        <div class="tool-output-panel" id="codeResults">
+          <div class="empty-state"><span>🔍</span>
+            <p>Analysis will appear here</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════ NEURAL NETWORK PAGE ═══════ -->
+    <section class="page" id="page-neural">
+      <div class="page-header">
+        <h1 class="page-title"><span class="title-icon">🧠</span> Neural Network Playground</h1>
+      </div>
+      <div class="neural-layout">
+        <div class="neural-controls">
+          <div class="control-group">
+            <label>Dataset</label>
+            <select class="select-styled" id="neuralDataset">
+              <option value="xor">XOR Gate</option>
+              <option value="circle">Circle</option>
+              <option value="spiral">Spiral</option>
+              <option value="gaussian">Gaussian</option>
+            </select>
+          </div>
+          <div class="control-group">
+            <label>Activation</label>
+            <select class="select-styled" id="neuralActivation">
+              <option value="sigmoid">Sigmoid</option>
+              <option value="tanh">Tanh</option>
+              <option value="relu">ReLU</option>
+              <option value="leakyRelu">Leaky ReLU</option>
+            </select>
+          </div>
+          <div class="control-group">
+            <label>Learning Rate: <span id="lrValue">0.5</span></label>
+            <input type="range" class="range-styled" id="neuralLR" min="1" max="100" value="50">
+          </div>
+          <div class="control-group">
+            <label>Epochs: <span id="epochValue">500</span></label>
+            <input type="range" class="range-styled" id="neuralEpochs" min="50" max="2000" value="500" step="50">
+          </div>
+          <div class="control-group">
+            <label>Hidden Layers</label>
+            <div class="layer-config" id="layerConfig">
+              <div class="layer-badge">Input: 2</div>
+              <input type="number" class="layer-input" value="8" min="1" max="32">
+              <input type="number" class="layer-input" value="4" min="1" max="32">
+              <div class="layer-badge">Output: 1</div>
+            </div>
+          </div>
+          <button class="btn btn-primary btn-glow btn-full" id="neuralTrainBtn">🚀 Train Network</button>
+        </div>
+        <div class="neural-viz">
+          <div class="viz-panel">
+            <h3>Decision Boundary</h3>
+            <canvas id="boundaryCanvas" width="400" height="400"></canvas>
+          </div>
+          <div class="viz-panel">
+            <h3>Training Progress</h3>
+            <canvas id="lossCanvas" width="400" height="300"></canvas>
+            <div class="training-stats" id="trainingStats">
+              <div class="train-stat"><span class="train-label">Loss</span><span class="train-value"
+                  id="trainLoss">—</span></div>
+              <div class="train-stat"><span class="train-label">Accuracy</span><span class="train-value"
+                  id="trainAccuracy">—</span></div>
+              <div class="train-stat"><span class="train-label">Epoch</span><span class="train-value"
+                  id="trainEpoch">—</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════ TEXT GENERATOR PAGE ═══════ -->
+    <section class="page" id="page-generator">
+      <div class="page-header">
+        <h1 class="page-title"><span class="title-icon">✍️</span> Text Generator</h1>
+      </div>
+      <div class="generator-layout">
+        <div class="generator-controls">
+          <div class="style-grid" id="styleGrid">
+            <button class="style-btn active" data-style="tech">💻 Tech Blog</button>
+            <button class="style-btn" data-style="shakespeare">🎭 Shakespeare</button>
+            <button class="style-btn" data-style="poetry">🌙 Poetry</button>
+            <button class="style-btn" data-style="news">📰 News</button>
+            <button class="style-btn" data-style="scifi">🚀 Sci-Fi</button>
+          </div>
+          <div class="control-group">
+            <label>Temperature: <span id="tempValue">0.7</span></label>
+            <input type="range" class="range-styled" id="tempSlider" min="1" max="20" value="7">
+          </div>
+          <div class="control-group">
+            <label>Max Words: <span id="wordsValue">80</span></label>
+            <input type="range" class="range-styled" id="wordsSlider" min="20" max="200" value="80">
+          </div>
+          <button class="btn btn-primary btn-glow btn-full" id="generateBtn">Generate Text ✨</button>
+        </div>
+        <div class="generator-output">
+          <div class="generated-text" id="generatedText">
+            <div class="empty-state"><span>✨</span>
+              <p>Your generated text will appear here with a typewriter effect</p>
+            </div>
+          </div>
+          <div class="gen-stats" id="genStats"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════ CLASSIFIER PAGE ═══════ -->
+    <section class="page" id="page-classifier">
+      <div class="page-header">
+        <h1 class="page-title"><span class="title-icon">🏷️</span> Text Classifier</h1>
+        <div class="page-actions">
+          <select class="select-styled" id="classifierDataset">
+            <option value="spam">🚫 Spam Detector</option>
+            <option value="topic">📚 Topic Classifier</option>
+            <option value="sentiment_demo">⭐ Review Sentiment</option>
+          </select>
+          <button class="btn btn-secondary" id="trainClassifierBtn">Train Model</button>
+        </div>
+      </div>
+      <div class="tool-layout">
+        <div class="tool-input-panel">
+          <textarea class="textarea-styled" id="classifierInput" placeholder="Enter text to classify..."
+            rows="4">Congratulations! You've won a free gift card. Click here to claim now!</textarea>
+          <button class="btn btn-primary btn-glow" id="classifyBtn">Classify 🏷️</button>
+          <div class="training-info" id="trainingInfo">
+            <p>Model not trained yet. Select a dataset and click "Train Model".</p>
+          </div>
+        </div>
+        <div class="tool-output-panel" id="classifierResults">
+          <div class="empty-state"><span>🏷️</span>
+            <p>Classification results will appear here</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
   </main>
 
-  <footer class="footer">
-    <span>NetPulse v1.0 — Open Source Network Monitor</span>
-  </footer>
-
   <script src="https://cdn.socket.io/4.8.0/socket.io.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <script src="neural-canvas.js"></script>
+  <script src="chat-ui.js"></script>
+  <script src="sentiment-ui.js"></script>
+  <script src="summarizer-ui.js"></script>
+  <script src="code-analyzer-ui.js"></script>
+  <script src="neural-playground-ui.js"></script>
+  <script src="generator-ui.js"></script>
+  <script src="classifier-ui.js"></script>
   <script src="app.js"></script>
 </body>
+
 </html>
