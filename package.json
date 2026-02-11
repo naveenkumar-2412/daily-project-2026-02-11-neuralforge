@@ -1,26 +1,30 @@
 {
-  "name": "netpulse",
+  "name": "neuralforge",
   "version": "1.0.0",
-  "description": "Self-hosted real-time API & network health monitor with a beautiful dashboard",
+  "description": "Self-hosted AI Studio with 7 built-in AI engines — chatbot, sentiment analysis, summarizer, code analyzer, neural network playground, text generator, and classifier",
   "main": "src/index.js",
   "scripts": {
     "start": "node src/index.js",
     "dev": "node --watch src/index.js"
   },
   "keywords": [
-    "monitoring",
-    "uptime",
-    "api-health",
+    "ai",
+    "machine-learning",
+    "neural-network",
+    "chatbot",
+    "sentiment-analysis",
+    "nlp",
+    "text-generation",
+    "classification",
+    "code-analysis",
     "dashboard",
-    "devops",
-    "real-time",
-    "network-monitor"
+    "self-hosted"
   ],
   "author": "naveenkumar-2412",
   "license": "MIT",
   "dependencies": {
-    "sql.js": "^1.11.0",
     "express": "^4.21.0",
-    "socket.io": "^4.8.0"
+    "socket.io": "^4.8.0",
+    "sql.js": "^1.11.0"
   }
 }

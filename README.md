@@ -1,49 +1,44 @@
-# ⚡ NetPulse — Real-time Network & API Health Monitor
+# 🧠 NeuralForge — AI Studio
 
-> **Self-hosted, lightweight API monitoring dashboard with real-time charts, SSL tracking, and webhook alerts — runs with a single command.**
+> **Self-hosted AI Studio with 7 built-in AI engines — all running locally, no API keys required. Features a stunning animated dashboard with glassmorphism design.**
 
-![NetPulse](https://img.shields.io/badge/NetPulse-v1.0-6366f1?style=for-the-badge)
+![NeuralForge](https://img.shields.io/badge/NeuralForge-v1.0-8b5cf6?style=for-the-badge)
 ![Node.js](https://img.shields.io/badge/Node.js-18%2B-339933?style=for-the-badge&logo=node.js)
 ![License](https://img.shields.io/badge/License-MIT-10b981?style=for-the-badge)
+![AI Engines](https://img.shields.io/badge/AI%20Engines-7-ec4899?style=for-the-badge)
 
 ---
 
-## 🎯 Problem
+## 🎯 What is NeuralForge?
 
-Monitoring services like Datadog, PagerDuty, and UptimeRobot are powerful — but expensive and complex for small teams. Developers building side projects, startups, or self-hosted services need a **lightweight, free, and beautiful** way to monitor their APIs.
+NeuralForge is a **self-hosted AI playground** that bundles 7 fully-functional AI engines into a single web application. Every engine runs **100% locally** using algorithmic AI — no external API keys, no cloud dependencies, no data leaving your machine.
 
-## 💡 Solution
+### 🤖 AI Engines
 
-NetPulse is a **zero-dependency, self-hosted** network health monitor that:
-- Monitors HTTP/HTTPS endpoints in real-time
-- Shows a beautiful dark-mode dashboard with live charts
-- Tracks SSL certificate expiry
-- Sends alerts via Discord, Slack, or custom webhooks
-- Stores 30 days of historical data in SQLite
-- Runs with a single `npm start`
+| Engine | Technology | Description |
+|--------|-----------|-------------|
+| 💬 **AI Chatbot** | Markov Chain + Rule-based | Conversational AI with 4 personality modes (Nova, Atlas, Muse, Byte) |
+| 😊 **Sentiment Analyzer** | Multi-dimensional NLP | Emotion detection, word-level analysis, confidence scoring |
+| 📝 **Text Summarizer** | TF-IDF Extractive | Smart text compression with keyword extraction |
+| 🔍 **Code Analyzer** | AST-like Static Analysis | Multi-language code quality grading (A-F), complexity metrics |
+| 🧠 **Neural Network** | Backpropagation from Scratch | Interactive playground with decision boundary visualization |
+| ✍️ **Text Generator** | N-gram Markov Chain | 5 style presets (Shakespeare, Tech, Poetry, News, Sci-Fi) |
+| 🏷️ **Text Classifier** | Naive Bayes | Train custom models for spam detection, topic classification |
 
 ---
 
-## ✨ Features
+## ✨ Frontend Features
 
-| Feature | Description |
-|---------|-------------|
-| 📡 **Multi-endpoint Monitoring** | Monitor unlimited HTTP/HTTPS endpoints simultaneously |
-| 📊 **Real-time Dashboard** | Live-updating charts and status cards via WebSockets |
-| 🔒 **SSL Certificate Tracking** | Days until expiry with color-coded warnings |
-| 🔔 **Webhook Alerts** | Discord, Slack, and custom webhook notifications |
-| 📈 **Historical Data** | 30-day retention with SQLite storage |
-| ✅ **Response Validation** | Check status codes and response body content |
-| 🔌 **REST API** | Programmatic access to all monitoring data |
+- **🌐 Animated Neural Canvas** — Interactive particle network background with mouse-reactive nodes
+- **🎨 Glassmorphism Dark Theme** — Premium design with neon gradients and backdrop blur
+- **📊 Canvas Visualizations** — Decision boundary plots, loss/accuracy charts drawn in real-time
+- **⚡ Typewriter Effects** — Text generator output with smooth character-by-character animation
+- **💬 Real-time Chat** — WebSocket-powered chat with typing indicators
+- **📱 Responsive Layout** — Works on desktop and mobile with collapsible sidebar
 
 ---
 
 ## 🚀 Quick Start
-
-### Prerequisites
-- Node.js 18+ installed
-
-### Installation
 
 ```bash
 # Clone the repository
@@ -53,178 +48,107 @@ cd daily-project-2026-02-10-netpulse
 # Install dependencies
 npm install
 
-# Start monitoring (creates config.json from example on first run)
+# Start the server
 npm start
+
+# Or use dev mode (auto-restart on changes)
+npm run dev
 ```
 
-Open **http://localhost:3000** in your browser 🎉
+Open **http://localhost:3000** in your browser.
 
 ---
 
-## ⚙️ Configuration
+## 📁 Project Structure
 
-Edit `config.json` to customize your monitoring setup:
-
-```json
-{
-  "port": 3000,
-  "checkIntervalMs": 30000,
-  "dataRetentionDays": 30,
-  "targets": [
-    {
-      "name": "My API",
-      "url": "https://api.example.com/health",
-      "method": "GET",
-      "expectedStatus": 200,
-      "timeoutMs": 10000,
-      "headers": {
-        "Authorization": "Bearer your-token"
-      },
-      "expectBodyContains": "ok"
-    }
-  ],
-  "alerts": {
-    "enabled": true,
-    "webhooks": [
-      {
-        "type": "discord",
-        "url": "https://discord.com/api/webhooks/..."
-      }
-    ],
-    "cooldownMinutes": 5
-  }
-}
 ```
-
-### Target Options
-
-| Option | Type | Default | Description |
-|--------|------|---------|-------------|
-| `name` | string | required | Display name |
-| `url` | string | required | Full URL to monitor |
-| `method` | string | `GET` | HTTP method |
-| `expectedStatus` | number | `200` | Expected status code |
-| `timeoutMs` | number | `10000` | Request timeout in ms |
-| `headers` | object | `{}` | Custom request headers |
-| `expectBodyContains` | string | — | String to find in response body |
-
-### Alert Webhook Types
-
-- **`discord`** — Discord webhook with embedded messages
-- **`slack`** — Slack incoming webhook with blocks
-- **`custom`** — Generic JSON POST to any URL
-
----
-
-## 📡 REST API
-
-| Endpoint | Description |
-|----------|-------------|
-| `GET /api/health` | Server health check |
-| `GET /api/summary` | Overall monitoring summary |
-| `GET /api/targets` | All targets with latest status |
-| `GET /api/targets/:id/history?hours=24` | Historical checks for a target |
-
-### Example Response — `/api/summary`
-
-```json
-{
-  "totalTargets": 3,
-  "upTargets": 2,
-  "downTargets": 1,
-  "pendingTargets": 0,
-  "avgResponseTimeMs": 142.5,
-  "overallUptime": "66.7"
-}
+neuralforge/
+├── public/                    # Frontend (served as static files)
+│   ├── index.html             # Main SPA with 8 tool pages
+│   ├── style.css              # Glassmorphism design system (~900 lines)
+│   ├── neural-canvas.js       # Animated particle background
+│   ├── app.js                 # Navigation & dashboard controller
+│   ├── chat-ui.js             # Chat interface module
+│   ├── sentiment-ui.js        # Sentiment visualization
+│   ├── summarizer-ui.js       # Summarizer interface
+│   ├── code-analyzer-ui.js    # Code quality display
+│   ├── neural-playground-ui.js # Neural network canvas visualizations
+│   ├── generator-ui.js        # Text generator with typewriter
+│   └── classifier-ui.js       # Classification results display
+├── src/                       # Backend
+│   ├── index.js               # Entry point — loads all engines
+│   ├── server.js              # Express + Socket.IO server
+│   ├── router.js              # REST API routes for all engines
+│   ├── database.js            # SQLite persistence layer
+│   └── ai/                    # AI Engine modules
+│       ├── chatbot.js         # Markov + rule-based chatbot
+│       ├── sentiment.js       # Multi-dimensional sentiment analyzer
+│       ├── summarizer.js      # TF-IDF extractive summarizer
+│       ├── code-analyzer.js   # Static code analysis engine
+│       ├── neural-network.js  # Neural network with backpropagation
+│       ├── text-generator.js  # N-gram Markov text generator
+│       └── classifier.js      # Naive Bayes text classifier
+├── config.example.json        # Configuration template
+├── package.json
+└── README.md
 ```
 
 ---
 
-## 🏗️ Architecture
+## 🔌 API Reference
 
-```
-┌──────────────────────────────────────────────────────┐
-│                    Browser (Dashboard)                │
-│    ┌──────────┐  ┌──────────┐  ┌──────────────────┐  │
-│    │ Summary  │  │ Targets  │  │ Detail + Chart   │  │
-│    │ Cards    │  │ List     │  │ (Chart.js)       │  │
-│    └──────────┘  └──────────┘  └──────────────────┘  │
-│              ▲         ▲              ▲               │
-│              └─────────┼──────────────┘               │
-│                   Socket.IO (real-time)               │
-└──────────────────────┬───────────────────────────────┘
-                       │
-┌──────────────────────▼───────────────────────────────┐
-│                  Node.js Server                       │
-│  ┌─────────┐  ┌──────────┐  ┌──────────┐            │
-│  │ Express │  │ Monitor  │  │ Alerter  │            │
-│  │ + API   │  │ Engine   │  │ Webhooks │            │
-│  └─────────┘  └──────────┘  └──────────┘            │
-│       │            │              │                   │
-│       ▼            ▼              │                   │
-│  ┌──────────────────────┐        │                   │
-│  │   SQLite Database    │        │                   │
-│  │ (targets + checks)   │        │                   │
-│  └──────────────────────┘        │                   │
-│                                  ▼                   │
-│                          Discord / Slack / Custom     │
-└──────────────────────────────────────────────────────┘
-```
+All endpoints are under `/api`:
+
+### Chat
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| POST | `/api/chat` | Send a message `{ message, personality }` |
+| GET | `/api/chat/personalities` | List available personalities |
+| POST | `/api/chat/clear` | Clear conversation context |
+
+### Sentiment
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| POST | `/api/sentiment` | Analyze text `{ text }` |
+
+### Summarizer
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| POST | `/api/summarize` | Summarize text `{ text, ratio }` |
+
+### Code Analyzer
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| POST | `/api/code-analyze` | Analyze code `{ code, language }` |
+
+### Neural Network
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| POST | `/api/neural/train` | Train network `{ dataset, layers, activation, epochs }` |
+| GET | `/api/neural/datasets` | List available datasets |
+
+### Text Generator
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| POST | `/api/generate` | Generate text `{ style, maxWords, temperature }` |
+
+### Classifier
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| POST | `/api/classify/train` | Train with dataset `{ dataset }` |
+| POST | `/api/classify/predict` | Classify text `{ text }` |
 
 ---
 
 ## 🛠️ Tech Stack
 
-- **Runtime:** Node.js 18+
-- **Server:** Express.js
-- **Real-time:** Socket.IO
-- **Database:** SQLite (better-sqlite3)
-- **Charts:** Chart.js
-- **Frontend:** Vanilla HTML/CSS/JS
-- **SSL Check:** Node.js TLS module
+- **Backend**: Node.js, Express, Socket.IO
+- **Database**: SQLite (via sql.js, zero native dependencies)
+- **Frontend**: Vanilla JS, CSS3 with custom properties, Canvas API
+- **AI**: All engines implemented from scratch — no ML library dependencies
 
 ---
 
-## 📂 Project Structure
+## 📜 License
 
-```
-netpulse/
-├── package.json
-├── config.example.json
-├── .gitignore
-├── README.md
-├── src/
-│   ├── index.js          # Entry point
-│   ├── server.js         # Express + Socket.IO
-│   ├── monitor.js        # Core monitoring engine
-│   ├── database.js       # SQLite operations
-│   ├── alerter.js        # Webhook alerts
-│   └── ssl-checker.js    # SSL certificate checker
-└── public/
-    ├── index.html        # Dashboard HTML
-    ├── style.css         # Dark theme styles
-    └── app.js            # Frontend logic
-```
-
----
-
-## 🔮 Future Scope
-
-- [ ] Multi-user authentication
-- [ ] Status page generation (public status pages)
-- [ ] Email alerts
-- [ ] TCP/UDP port monitoring
-- [ ] Incident timeline and post-mortems
-- [ ] Docker support
-- [ ] Prometheus/Grafana integration
-- [ ] Mobile-responsive PWA
-
----
-
-## 📄 License
-
-MIT License — free for personal and commercial use.
-
----
-
-Built with ⚡ by [naveenkumar-2412](https://github.com/naveenkumar-2412) — Daily AI Project #1
+MIT © [naveenkumar-2412](https://github.com/naveenkumar-2412)
