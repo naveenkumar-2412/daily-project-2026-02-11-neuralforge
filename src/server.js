@@ -1,99 +1,94 @@
-const express = require('express');
-const http = require('http');
-const { Server: SocketIO } = require('socket.io');
-const path = require('path');
-const database = require('./database');
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+// NeuralForge AI Studio — Express + Socket.IO Server
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-function createServer(config) {
+const http = require('http');
+const express = require('express');
+const { Server: SocketIOServer } = require('socket.io');
+const path = require('path');
+const createRouter = require('./router');
+
+function createServer(config, engines) {
     const app = express();
     const server = http.createServer(app);
-    const io = new SocketIO(server, { cors: { origin: '*' } });
+    const io = new SocketIOServer(server, { cors: { origin: '*' } });
 
-    // Serve static frontend
+    // Middleware
+    app.use(express.json({ limit: '5mb' }));
     app.use(express.static(path.join(__dirname, '..', 'public')));
-    app.use(express.json());
 
-    // ─── REST API ──────────────────────────────────────────
+    // API Routes
+    app.use('/api', createRouter(engines, io));
 
-    // GET /api/summary - Overall monitoring summary
-    app.get('/api/summary', (req, res) => {
-        try {
-            const summary = database.getSummary();
-            res.json(summary);
-        } catch (err) {
-            res.status(500).json({ error: err.message });
-        }
-    });
-
-    // GET /api/targets - All targets with latest status
-    app.get('/api/targets', (req, res) => {
-        try {
-            const targets = database.getTargets();
-            res.json(targets);
-        } catch (err) {
-            res.status(500).json({ error: err.message });
-        }
-    });
-
-    // GET /api/targets/:id/history - Historical checks for a target
-    app.get('/api/targets/:id/history', (req, res) => {
-        try {
-            const hours = parseInt(req.query.hours) || 24;
-            const history = database.getTargetHistory(parseInt(req.params.id), hours);
-            res.json(history);
-        } catch (err) {
-            res.status(500).json({ error: err.message });
-        }
-    });
-
-    // Health check
+    // Health endpoint
     app.get('/api/health', (req, res) => {
-        res.json({ status: 'ok', uptime: process.uptime() });
+        res.json({
+            status: 'ok',
+            name: 'NeuralForge AI Studio',
+            version: '1.0.0',
+            uptime: process.uptime(),
+            engines: Object.keys(engines),
+            timestamp: new Date().toISOString()
+        });
     });
 
-    // ─── WebSocket ─────────────────────────────────────────
-
+    // Socket.IO connection handling
     io.on('connection', (socket) => {
-        // Send initial data on connect
-        try {
-            const targets = database.getTargets();
-            const summary = database.getSummary();
-            socket.emit('init', { targets, summary });
-        } catch (err) {
-            console.error('[WS] Error sending initial data:', err.message);
-        }
+        console.log(`[NeuralForge] Client connected: ${socket.id}`);
 
-        socket.on('requestHistory', ({ targetId, hours }) => {
+        // Real-time chat
+        socket.on('chat:message', (data) => {
             try {
-                const history = database.getTargetHistory(targetId, hours || 24);
-                socket.emit('history', { targetId, data: history });
+                const result = engines.chatbot.chat(data.message);
+                socket.emit('chat:response', result);
             } catch (err) {
-                socket.emit('error', { message: err.message });
+                socket.emit('chat:error', { error: err.message });
             }
         });
+
+        // Real-time neural network training
+        socket.on('neural:train', (data) => {
+            try {
+                const NeuralNetwork = require('./ai/neural-network');
+                const dataset = NeuralNetwork.getDataset(data.dataset);
+                if (!dataset) { socket.emit('neural:error', { error: 'Unknown dataset' }); return; }
+
+                const layers = data.layers || [dataset.inputSize, 8, 4, dataset.outputSize];
+                const nn = new NeuralNetwork(layers, data.activation || 'sigmoid', data.learningRate || 0.5);
+                const epochs = Math.min(data.epochs || 500, 2000);
+
+                socket.emit('neural:started', { layers, activation: data.activation, epochs, dataset: data.dataset });
+
+                // Train with progress callbacks
+                const history = nn.train(dataset.inputs, dataset.outputs, epochs, (progress) => {
+                    socket.emit('neural:progress', progress);
+                });
+
+                // Send final results
+                const boundary = nn.getDecisionBoundary(30);
+                const state = nn.getNetworkState();
+                socket.emit('neural:complete', { history, boundary, state, dataset: data.dataset });
+            } catch (err) {
+                socket.emit('neural:error', { error: err.message });
+            }
+        });
+
+        socket.on('disconnect', () => {
+            console.log(`[NeuralForge] Client disconnected: ${socket.id}`);
+        });
     });
 
-    /**
-     * Broadcast a check result to all connected clients
-     */
-    function broadcastCheckResult(result) {
-        const targets = database.getTargets();
-        const summary = database.getSummary();
-        io.emit('checkResult', { result, targets, summary });
-    }
+    // SPA fallback
+    app.get('*', (req, res) => {
+        res.sendFile(path.join(__dirname, '..', 'public', 'index.html'));
+    });
 
-    /**
-     * Start listening
-     */
-    function listen(port) {
-        return new Promise((resolve) => {
-            server.listen(port, () => {
-                resolve(server);
-            });
-        });
-    }
-
-    return { app, server, io, listen, broadcastCheckResult };
+    return {
+        listen: (port) => new Promise((resolve) => {
+            server.listen(port, () => resolve());
+        }),
+        io
+    };
 }
 
 module.exports = createServer;

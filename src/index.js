@@ -1,11 +1,21 @@
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+// NeuralForge AI Studio — Entry Point
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
 const fs = require('fs');
 const path = require('path');
 const database = require('./database');
 const createServer = require('./server');
-const Monitor = require('./monitor');
-const Alerter = require('./alerter');
 
-// ─── Load Configuration ──────────────────────────────────
+// AI Engines
+const Chatbot = require('./ai/chatbot');
+const SentimentAnalyzer = require('./ai/sentiment');
+const Summarizer = require('./ai/summarizer');
+const CodeAnalyzer = require('./ai/code-analyzer');
+const TextGenerator = require('./ai/text-generator');
+const TextClassifier = require('./ai/classifier');
+
+// ─── Load Config ─────────────────────────────────────────────────────────────
 
 const configPath = path.join(__dirname, '..', 'config.json');
 const exampleConfigPath = path.join(__dirname, '..', 'config.example.json');
@@ -13,99 +23,73 @@ const exampleConfigPath = path.join(__dirname, '..', 'config.example.json');
 let config;
 if (fs.existsSync(configPath)) {
     config = JSON.parse(fs.readFileSync(configPath, 'utf-8'));
-    console.log('[NetPulse] Loaded config.json');
 } else if (fs.existsSync(exampleConfigPath)) {
-    // Copy example config for first run
     fs.copyFileSync(exampleConfigPath, configPath);
     config = JSON.parse(fs.readFileSync(configPath, 'utf-8'));
-    console.log('[NetPulse] Created config.json from config.example.json');
+    console.log('[NeuralForge] Created config.json from example');
 } else {
-    console.error('[NetPulse] No config.json or config.example.json found!');
-    process.exit(1);
+    config = { port: 3000 };
 }
 
-// ─── Initialize ──────────────────────────────────────────
+// ─── Main ────────────────────────────────────────────────────────────────────
 
 async function main() {
-    // Init database
+    console.log('');
+    console.log('  ╔══════════════════════════════════════════════════╗');
+    console.log('  ║     🧠  NeuralForge AI Studio  🧠               ║');
+    console.log('  ╚══════════════════════════════════════════════════╝');
+    console.log('');
+
+    // Initialize database
     await database.init();
-    console.log('[NetPulse] Database initialized');
+    console.log('  ✅ Database initialized');
 
-    // Sync targets from config to DB
-    const targetDbEntries = config.targets.map(target => {
-        const id = database.upsertTarget(target);
-        return { id, ...target };
-    });
-    console.log(`[NetPulse] ${targetDbEntries.length} targets synced`);
+    // Initialize AI engines
+    const engines = {
+        chatbot: new Chatbot(),
+        sentiment: new SentimentAnalyzer(),
+        summarizer: new Summarizer(),
+        codeAnalyzer: new CodeAnalyzer(),
+        textGenerator: new TextGenerator(),
+        classifier: new TextClassifier()
+    };
 
-    // Init alerter
-    const alerter = new Alerter(config.alerts);
+    console.log('  ✅ AI Engines loaded:');
+    console.log('     • Chatbot (Markov Chain + Rule-based)');
+    console.log('     • Sentiment Analyzer (Multi-dimensional)');
+    console.log('     • Text Summarizer (TF-IDF Extractive)');
+    console.log('     • Code Analyzer (Multi-language)');
+    console.log('     • Neural Network (Backpropagation)');
+    console.log('     • Text Generator (Markov Chain)');
+    console.log('     • Text Classifier (Naive Bayes)');
 
-    // Create server
-    const { listen, broadcastCheckResult } = createServer(config);
-
-    // Init monitor with result handler
-    const monitor = new Monitor(config, async (result) => {
-        // Store in database
-        database.insertCheck({
-            targetId: result.targetId,
-            statusCode: result.statusCode,
-            responseTimeMs: result.responseTimeMs,
-            isUp: result.isUp,
-            error: result.error,
-            sslDaysRemaining: result.sslDaysRemaining
-        });
-
-        // Broadcast to dashboard
-        broadcastCheckResult(result);
-
-        // Send alerts on status change
-        if (result.statusChanged) {
-            await alerter.alert(result.target, result, result.previousStatus);
-        }
-
-        const statusIcon = result.isUp ? '✅' : '❌';
-        console.log(
-            `${statusIcon} ${result.target.name} | ${result.statusCode || 'ERR'} | ${result.responseTimeMs}ms${result.sslDaysRemaining !== null ? ` | SSL: ${result.sslDaysRemaining}d` : ''}`
-        );
-    });
+    // Pre-load classifier with demo data
+    engines.classifier.loadDemoDataset('spam');
+    console.log('  ✅ Classifier pre-loaded with spam dataset');
 
     // Start server
     const port = config.port || 3000;
+    const { listen } = createServer(config, engines);
     await listen(port);
 
     console.log('');
-    console.log('╔══════════════════════════════════════════════╗');
-    console.log('║          ⚡ NetPulse is running ⚡            ║');
-    console.log(`║   Dashboard: http://localhost:${port}             ║`);
-    console.log(`║   API:       http://localhost:${port}/api          ║`);
-    console.log('╚══════════════════════════════════════════════╝');
+    console.log('  ╔══════════════════════════════════════════════════╗');
+    console.log(`  ║   🚀 Server running at http://localhost:${port}      ║`);
+    console.log('  ║   📡 API available at /api                      ║');
+    console.log('  ║   🔌 WebSocket enabled for real-time features   ║');
+    console.log('  ╚══════════════════════════════════════════════════╝');
     console.log('');
 
-    // Start monitoring
-    monitor.start(targetDbEntries);
-
-    // Cleanup old data daily
-    setInterval(() => {
-        const deleted = database.cleanupOldData(config.dataRetentionDays || 30);
-        if (deleted > 0) console.log(`[NetPulse] Cleaned up ${deleted} old records`);
-    }, 24 * 60 * 60 * 1000);
-
     // Graceful shutdown
-    process.on('SIGINT', () => {
-        console.log('\n[NetPulse] Shutting down...');
-        monitor.stop();
+    const shutdown = () => {
+        console.log('\n  [NeuralForge] Shutting down...');
         process.exit(0);
-    });
-
-    process.on('SIGTERM', () => {
-        console.log('\n[NetPulse] Shutting down...');
-        monitor.stop();
-        process.exit(0);
-    });
+    };
+    process.on('SIGINT', shutdown);
+    process.on('SIGTERM', shutdown);
 }
 
 main().catch(err => {
-    console.error('[NetPulse] Fatal error:', err);
+    console.error('[NeuralForge] Fatal error:', err);
     process.exit(1);
 });
