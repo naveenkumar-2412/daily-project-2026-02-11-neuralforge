@@ -6,7 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>NeuralForge — AI Studio</title>
   <meta name="description"
-    content="Self-hosted AI Studio with 7 built-in AI engines: chatbot, sentiment, summarizer, code analyzer, neural network, text generator, classifier">
+    content="Self-hosted AI Studio with 15 built-in AI engines: chatbot, sentiment, summarizer, code analyzer, neural network, text generator, classifier, translator, Q&A, NER, recommender, anomaly detector, spell checker, keyword extractor, paraphraser">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link
@@ -62,6 +62,41 @@
       <button class="nav-item" data-page="classifier" id="nav-classifier">
         <span class="nav-icon">🏷️</span>
         <span class="nav-label">Classifier</span>
+      </button>
+
+      <div class="nav-divider"><span>New Engines</span></div>
+
+      <button class="nav-item" data-page="translator" id="nav-translator">
+        <span class="nav-icon">🌍</span>
+        <span class="nav-label">Translator</span>
+      </button>
+      <button class="nav-item" data-page="qa" id="nav-qa">
+        <span class="nav-icon">❓</span>
+        <span class="nav-label">Q&A Engine</span>
+      </button>
+      <button class="nav-item" data-page="ner" id="nav-ner">
+        <span class="nav-icon">🏷️</span>
+        <span class="nav-label">Entity NER</span>
+      </button>
+      <button class="nav-item" data-page="recommender" id="nav-recommender">
+        <span class="nav-icon">⭐</span>
+        <span class="nav-label">Recommender</span>
+      </button>
+      <button class="nav-item" data-page="anomaly" id="nav-anomaly">
+        <span class="nav-icon">📊</span>
+        <span class="nav-label">Anomaly</span>
+      </button>
+      <button class="nav-item" data-page="spellcheck" id="nav-spellcheck">
+        <span class="nav-icon">✏️</span>
+        <span class="nav-label">Spell Check</span>
+      </button>
+      <button class="nav-item" data-page="keywords" id="nav-keywords">
+        <span class="nav-icon">🔑</span>
+        <span class="nav-label">Keywords</span>
+      </button>
+      <button class="nav-item" data-page="paraphraser" id="nav-paraphraser">
+        <span class="nav-icon">🔄</span>
+        <span class="nav-label">Paraphraser</span>
       </button>
     </div>
 
@@ -350,6 +385,70 @@
       </div>
     </section>
 
+    <!-- ═══════ TRANSLATOR PAGE ═══════ -->
+    <section class="page" id="page-translator">
+      <div class="page-header">
+        <h1 class="page-title"><span class="title-icon">🌍</span> Multi-Language Translator</h1>
+      </div>
+      <div id="translator-section"></div>
+    </section>
+
+    <!-- ═══════ Q&A PAGE ═══════ -->
+    <section class="page" id="page-qa">
+      <div class="page-header">
+        <h1 class="page-title"><span class="title-icon">❓</span> Q&A Engine</h1>
+      </div>
+      <div id="qa-section"></div>
+    </section>
+
+    <!-- ═══════ NER PAGE ═══════ -->
+    <section class="page" id="page-ner">
+      <div class="page-header">
+        <h1 class="page-title"><span class="title-icon">🏷️</span> Named Entity Recognition</h1>
+      </div>
+      <div id="ner-section"></div>
+    </section>
+
+    <!-- ═══════ RECOMMENDER PAGE ═══════ -->
+    <section class="page" id="page-recommender">
+      <div class="page-header">
+        <h1 class="page-title"><span class="title-icon">⭐</span> Content Recommender</h1>
+      </div>
+      <div id="recommender-section"></div>
+    </section>
+
+    <!-- ═══════ ANOMALY PAGE ═══════ -->
+    <section class="page" id="page-anomaly">
+      <div class="page-header">
+        <h1 class="page-title"><span class="title-icon">📊</span> Anomaly Detector</h1>
+      </div>
+      <div id="anomaly-section"></div>
+    </section>
+
+    <!-- ═══════ SPELL CHECK PAGE ═══════ -->
+    <section class="page" id="page-spellcheck">
+      <div class="page-header">
+        <h1 class="page-title"><span class="title-icon">✏️</span> Spell Checker</h1>
+      </div>
+      <div id="spellcheck-section"></div>
+    </section>
+
+    <!-- ═══════ KEYWORDS PAGE ═══════ -->
+    <section class="page" id="page-keywords">
+      <div class="page-header">
+        <h1 class="page-title"><span class="title-icon">🔑</span> Keyword Extractor</h1>
+      </div>
+      <div id="keywords-section"></div>
+    </section>
+
+    <!-- ═══════ PARAPHRASER PAGE ═══════ -->
+    <section class="page" id="page-paraphraser">
+      <div class="page-header">
+        <h1 class="page-title"><span class="title-icon">🔄</span> Text Paraphraser</h1>
+      </div>
+      <div id="paraphraser-section"></div>
+    </section>
+
   </main>
 
   <script src="https://cdn.socket.io/4.8.0/socket.io.min.js"></script>
@@ -361,6 +460,14 @@
   <script src="neural-playground-ui.js"></script>
   <script src="generator-ui.js"></script>
   <script src="classifier-ui.js"></script>
+  <script src="translator-ui.js"></script>
+  <script src="qa-ui.js"></script>
+  <script src="ner-ui.js"></script>
+  <script src="recommender-ui.js"></script>
+  <script src="anomaly-ui.js"></script>
+  <script src="spellcheck-ui.js"></script>
+  <script src="keywords-ui.js"></script>
+  <script src="paraphraser-ui.js"></script>
   <script src="app.js"></script>
 </body>
 

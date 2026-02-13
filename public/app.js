@@ -34,7 +34,9 @@
         if (!card) return;
         const pageMap = {
             chat: 'chat', sentiment: 'sentiment', summarizer: 'summarizer',
-            codeAnalyzer: 'code', neural: 'neural', generator: 'generator', classifier: 'classifier'
+            codeAnalyzer: 'code', neural: 'neural', generator: 'generator', classifier: 'classifier',
+            translator: 'translator', qa: 'qa', ner: 'ner', recommender: 'recommender',
+            anomaly: 'anomaly', spellcheck: 'spellcheck', keywords: 'keywords', paraphrase: 'paraphraser'
         };
         const pageId = pageMap[card.dataset.engine];
         if (pageId) navigate(pageId);
@@ -107,7 +109,17 @@
         if (window.GeneratorUI) window.GeneratorUI.init();
         if (window.ClassifierUI) window.ClassifierUI.init();
 
-        console.log('🧠 NeuralForge AI Studio initialized');
+        // New engine UI modules
+        if (window.TranslatorUI) window.TranslatorUI.init();
+        if (window.QAUI) window.QAUI.init();
+        if (window.NERUI) window.NERUI.init();
+        if (window.RecommenderUI) window.RecommenderUI.init();
+        if (window.AnomalyUI) window.AnomalyUI.init();
+        if (window.SpellCheckUI) window.SpellCheckUI.init();
+        if (window.KeywordsUI) window.KeywordsUI.init();
+        if (window.ParaphraserUI) window.ParaphraserUI.init();
+
+        console.log('🧠 NeuralForge AI Studio initialized — 15 engines');
     }
 
     // Start when DOM ready

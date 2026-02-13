@@ -1,5 +1,5 @@
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-// NeuralForge AI Studio — API Router
+// NeuralForge AI Studio — API Router (15 Engines)
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 const express = require('express');
@@ -135,6 +135,149 @@ function createRouter(engines, io) {
         res.json(TextClassifier.getDemoDatasets());
     });
 
+    // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+    // NEW ENGINES
+    // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+    // ─── Translator ──────────────────────────────────────────────────
+    router.post('/translate', (req, res) => {
+        try {
+            const { text, from, to } = req.body;
+            if (!text) return res.status(400).json({ error: 'Text is required' });
+            res.json(engines.translator.translate(text, from || 'en', to || 'es'));
+        } catch (err) { res.status(500).json({ error: err.message }); }
+    });
+
+    router.post('/translate/detect', (req, res) => {
+        try {
+            const { text } = req.body;
+            if (!text) return res.status(400).json({ error: 'Text is required' });
+            res.json(engines.translator.detectLanguage(text));
+        } catch (err) { res.status(500).json({ error: err.message }); }
+    });
+
+    router.get('/translate/languages', (req, res) => {
+        res.json(engines.translator.getSupportedLanguages());
+    });
+
+    // ─── Question & Answer ───────────────────────────────────────────
+    router.post('/qa', (req, res) => {
+        try {
+            const { question } = req.body;
+            if (!question) return res.status(400).json({ error: 'Question is required' });
+            res.json(engines.qa.answer(question));
+        } catch (err) { res.status(500).json({ error: err.message }); }
+    });
+
+    router.get('/qa/topics', (req, res) => {
+        res.json(engines.qa.getTopics());
+    });
+
+    router.get('/qa/history', (req, res) => {
+        res.json(engines.qa.getHistory());
+    });
+
+    // ─── Named Entity Recognition ────────────────────────────────────
+    router.post('/ner', (req, res) => {
+        try {
+            const { text } = req.body;
+            if (!text) return res.status(400).json({ error: 'Text is required' });
+            res.json(engines.ner.extract(text));
+        } catch (err) { res.status(500).json({ error: err.message }); }
+    });
+
+    router.get('/ner/types', (req, res) => {
+        res.json(engines.ner.getEntityTypes());
+    });
+
+    // ─── Recommender ─────────────────────────────────────────────────
+    router.post('/recommend', (req, res) => {
+        try {
+            const { interests, difficulty, category, limit } = req.body;
+            res.json(engines.recommender.recommend({ interests, difficulty, category, limit }));
+        } catch (err) { res.status(500).json({ error: err.message }); }
+    });
+
+    router.post('/recommend/similar', (req, res) => {
+        try {
+            const { itemId, limit } = req.body;
+            if (!itemId) return res.status(400).json({ error: 'itemId is required' });
+            res.json(engines.recommender.getSimilar(itemId, limit));
+        } catch (err) { res.status(500).json({ error: err.message }); }
+    });
+
+    router.get('/recommend/categories', (req, res) => {
+        res.json(engines.recommender.getCategories());
+    });
+
+    // ─── Anomaly Detection ───────────────────────────────────────────
+    router.post('/anomaly', (req, res) => {
+        try {
+            const { data, method, threshold, features } = req.body;
+            if (!data) return res.status(400).json({ error: 'Data array is required' });
+            res.json(engines.anomaly.detect(data, { method, threshold, features }));
+        } catch (err) { res.status(500).json({ error: err.message }); }
+    });
+
+    router.get('/anomaly/methods', (req, res) => {
+        res.json(engines.anomaly.getMethods());
+    });
+
+    // ─── Spell Checker ───────────────────────────────────────────────
+    router.post('/spellcheck', (req, res) => {
+        try {
+            const { text } = req.body;
+            if (!text) return res.status(400).json({ error: 'Text is required' });
+            res.json(engines.spellChecker.check(text));
+        } catch (err) { res.status(500).json({ error: err.message }); }
+    });
+
+    router.post('/spellcheck/add', (req, res) => {
+        try {
+            const { word } = req.body;
+            if (!word) return res.status(400).json({ error: 'Word is required' });
+            res.json(engines.spellChecker.addWord(word));
+        } catch (err) { res.status(500).json({ error: err.message }); }
+    });
+
+    router.get('/spellcheck/dictionary', (req, res) => {
+        res.json(engines.spellChecker.getDictionarySize());
+    });
+
+    // ─── Keyword Extractor ───────────────────────────────────────────
+    router.post('/keywords', (req, res) => {
+        try {
+            const { text, maxKeywords, method } = req.body;
+            if (!text) return res.status(400).json({ error: 'Text is required' });
+            res.json(engines.keywords.extract(text, { maxKeywords, method }));
+        } catch (err) { res.status(500).json({ error: err.message }); }
+    });
+
+    router.get('/keywords/methods', (req, res) => {
+        res.json(engines.keywords.getMethods());
+    });
+
+    // ─── Paraphraser ─────────────────────────────────────────────────
+    router.post('/paraphrase', (req, res) => {
+        try {
+            const { text, intensity } = req.body;
+            if (!text) return res.status(400).json({ error: 'Text is required' });
+            res.json(engines.paraphraser.paraphrase(text, { intensity }));
+        } catch (err) { res.status(500).json({ error: err.message }); }
+    });
+
+    router.post('/paraphrase/synonyms', (req, res) => {
+        try {
+            const { word } = req.body;
+            if (!word) return res.status(400).json({ error: 'Word is required' });
+            res.json(engines.paraphraser.getSynonyms(word));
+        } catch (err) { res.status(500).json({ error: err.message }); }
+    });
+
+    router.get('/paraphrase/levels', (req, res) => {
+        res.json(engines.paraphraser.getIntensityLevels());
+    });
+
     // ─── Dashboard Summary ───────────────────────────────────────────
     router.get('/dashboard', (req, res) => {
         res.json({
@@ -145,9 +288,18 @@ function createRouter(engines, io) {
                 { id: 'codeAnalyzer', name: 'Code Analyzer', icon: '🔍', description: 'Multi-language code quality analysis', status: 'active' },
                 { id: 'neural', name: 'Neural Playground', icon: '🧠', description: 'Interactive neural network trainer', status: 'active' },
                 { id: 'generator', name: 'Text Generator', icon: '✍️', description: 'Markov chain text generation', status: 'active' },
-                { id: 'classifier', name: 'Text Classifier', icon: '🏷️', description: 'Naive Bayes text classification', status: 'active' }
+                { id: 'classifier', name: 'Text Classifier', icon: '🏷️', description: 'Naive Bayes text classification', status: 'active' },
+                { id: 'translator', name: 'Translator', icon: '🌍', description: 'Multi-language dictionary translation', status: 'active' },
+                { id: 'qa', name: 'Q&A Engine', icon: '❓', description: 'Knowledge-base question answering', status: 'active' },
+                { id: 'ner', name: 'Entity Recognition', icon: '🏷️', description: 'Named entity extraction (NER)', status: 'active' },
+                { id: 'recommender', name: 'Recommender', icon: '⭐', description: 'Content-based recommendations', status: 'active' },
+                { id: 'anomaly', name: 'Anomaly Detector', icon: '📊', description: 'Statistical anomaly detection', status: 'active' },
+                { id: 'spellcheck', name: 'Spell Checker', icon: '✏️', description: 'Dictionary-based spell checking', status: 'active' },
+                { id: 'keywords', name: 'Keyword Extractor', icon: '🔑', description: 'TF-IDF keyword extraction', status: 'active' },
+                { id: 'paraphrase', name: 'Paraphraser', icon: '🔄', description: 'Rule-based text paraphrasing', status: 'active' }
             ],
             stats: {
+                totalEngines: 15,
                 chatMessages: engines.chatbot.getMetrics().messagesReceived,
                 sentimentAnalyses: engines.sentiment.getHistory().length,
                 generatedTexts: engines.textGenerator.getHistory().length,
